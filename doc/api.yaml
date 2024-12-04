@@ -1,0 +1,109 @@
+openapi: 3.0.0
+info:
+  title: User Management API
+  description: API for managing users, including creating new users and fetching all users.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /user/session:
+    post:
+      summary: Create a new user
+      operationId: createUser
+      tags:
+        - User
+      parameters:
+        - name: username
+          in: query
+          description: The username for the new user.
+          required: true
+          schema:
+            type: string
+            example: "john_doe"
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request if the username parameter is missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "username parameter is required"
+        '409':
+          description: Conflict if the username already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "username already exists"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to create user"
+
+  /users:
+    get:
+      summary: Get all users
+      operationId: getAllUsers
+      tags:
+        - User
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to fetch users"
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: The unique ID of the user.
+          example: "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6"
+        username:
+          type: string
+          description: The username of the user.
+          example: "john_doe"
+        photo:
+          type: string
+          description: The photo URL or an empty string if no photo is set.
+          example: "https://example.com/photo.jpg"
+          nullable: true
+
+
+
